@@ -4,6 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import AddEditAccountModal from '../../../src/features/dashboard/components/AddEditAccountModal';
+import ToastProvider from '../../../src/components/ToastProvider';
 import type { SocialAccount } from '../../../src/types';
 
 // We mock the RTK Query hooks because this test is about the UI behavior + validation,
@@ -26,7 +27,9 @@ function renderModal(props: ComponentProps<typeof AddEditAccountModal>) {
   const theme = createTheme();
   return render(
     <ThemeProvider theme={theme}>
-      <AddEditAccountModal {...props} />
+      <ToastProvider>
+        <AddEditAccountModal {...props} />
+      </ToastProvider>
     </ThemeProvider>
   );
 }

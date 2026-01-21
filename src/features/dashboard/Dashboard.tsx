@@ -11,11 +11,13 @@ import StatusCardList from './components/StatusCardList';
 import Header from './components/Header';
 import LoadingSkeleton from './components/LoadingSkeleton';
 import DummyChartCard from './components/DummyChartCard';
+import { useToast } from '../../components/ToastProvider';
 
 
 export default function Dashboard() {
   const { data: accounts, isLoading, isError, error } = useGetAccountsQuery();
   const [deleteAccount, { isLoading: isDeleting }] = useDeleteAccountMutation();
+  const { showToast } = useToast();
   
   // Modal state management
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -73,9 +75,23 @@ export default function Dashboard() {
         await deleteAccount(selectedAccount.id).unwrap();
         setIsDeleteDialogOpen(false);
         setSelectedAccount(null);
+
+        showToast({
+          severity: 'success',
+          message: 'Account deleted successfully.',
+        });
       } catch (error) {
-        // Error handling is done by RTK Query
         console.error('Failed to delete account:', error);
+
+        const message =
+          error && typeof error === 'object' && 'error' in error
+            ? String((error as { error: string }).error)
+            : 'Something went wrong while deleting. Please try again.';
+
+        showToast({
+          severity: 'error',
+          message,
+        });
       }
     }
   };

@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { useAddAccountMutation, useEditAccountMutation } from '../slices/dashboardApi';
 import { accountSchema, type AccountFormValues } from '../../../utils/validation';
+import { useToast } from '../../../components/ToastProvider';
 import type { SocialAccount } from '../../../types';
 import type { SocialPlatform } from '../../../types';
 
@@ -38,6 +39,7 @@ export default function AddEditAccountModal({
   const [addAccount, { isLoading: isAdding }] = useAddAccountMutation();
   const [editAccount, { isLoading: isEditing }] = useEditAccountMutation();
   const [duplicateError, setDuplicateError] = useState<string>('');
+  const { showToast } = useToast();
 
   const {
     control,
@@ -118,6 +120,11 @@ export default function AddEditAccountModal({
             isConnected: initialData.isConnected,
           },
         }).unwrap();
+
+        showToast({
+          severity: 'success',
+          message: 'Account updated successfully.',
+        });
       } else {
         await addAccount({
           platform: data.platform,
@@ -128,12 +135,27 @@ export default function AddEditAccountModal({
           isConnected: true,
           connectedAt: new Date().toISOString(),
         }).unwrap();
+
+        showToast({
+          severity: 'success',
+          message: 'Account added successfully.',
+        });
       }
 
       onClose();
     } catch (error) {
-      // Error handling is done by RTK Query - we could show a toast here
+      // We still log the raw error for debugging, but we show a human-friendly toast for the user.
       console.error('Failed to save account:', error);
+
+      const message =
+        error && typeof error === 'object' && 'error' in error
+          ? String((error as { error: string }).error)
+          : 'Something went wrong while saving. Please try again.';
+
+      showToast({
+        severity: 'error',
+        message,
+      });
     }
   };
 
