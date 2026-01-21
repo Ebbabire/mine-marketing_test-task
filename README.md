@@ -1,73 +1,119 @@
-# React + TypeScript + Vite
+# Social Media Dashboard (Frontend Test Task)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Vite + React + TypeScript social media dashboard showcasing **RTK Query**, **RHF + Zod**, and a **mock backend** with realistic async behavior.
 
-Currently, two official plugins are available:
+### Tech stack
+- **Build**: Vite + React + TypeScript
+- **State**: Redux Toolkit + RTK Query
+- **UI**: Tailwind (utility styling), Bootstrap 5 (grid via CDN), MUI (components)
+- **Forms**: React Hook Form + Zod
+- **Charts**: Recharts
+- **Tests**: Vitest + React Testing Library
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Getting started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Install
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Run the app
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+### Run tests
+
+```bash
+# watch mode
+npm test
+
+# CI mode (single run)
+npm run test:run
+```
+
+---
+
+## What’s implemented
+
+### Dashboard
+- **Connected Accounts** grid with modern card UI
+- **Add / Edit** account flow (MUI Dialog + React Hook Form + Zod)
+- **Delete** confirmation dialog
+- **Loading skeleton** state to avoid layout shift and improve perceived performance
+- Stats header cards + a demo chart card
+
+### Data layer (mock backend)
+This project intentionally runs without a real backend. Instead, it uses a small in-memory service that behaves like an API:
+- `src/mocks/api.ts`: CRUD functions with a **500ms `setTimeout` delay** to simulate network latency
+- `src/mocks/data/data.ts`: initial mock dataset
+
+This lets us build and validate production-style UI behavior (loading, error handling, async flows) without standing up a server.
+
+---
+
+## Architecture decisions (the “why”)
+
+### RTK Query instead of `useEffect` fetching
+RTK Query is used for “server state” because it gives us production-grade behavior for free:
+- **Caching + request deduping**: multiple components can request the same data without duplicate calls
+- **Declarative refetching**: mutations invalidate tags → queries refresh automatically
+- **Standardized async state**: consistent `isLoading`, `isError`, and `error` handling across the app
+
+See: `src/features/dashboard/slices/dashboardApi.ts`
+
+### React Hook Form + Zod (and why Controller with MUI)
+MUI inputs are controlled components. RHF is optimized for uncontrolled inputs. We use **`Controller`** to bridge the two so:
+- RHF remains the source of truth for form state and validation
+- MUI receives the controlled `value` / `onChange` wiring it expects
+
+See: `src/features/dashboard/components/AddEditAccountModal.tsx` and `src/utils/validation.ts`
+
+### Styling: Tailwind + Bootstrap grid + MUI components
+- **Bootstrap**: used strictly for the grid system (fast, familiar, predictable breakpoints)
+- **MUI**: used for accessible building blocks (Dialog, buttons, AppBar, etc.)
+- **Tailwind**: used for rapid layout/typography polish and micro-interactions
+
+This combination is deliberate (per task requirements) and keeps each tool in its “sweet spot”.
+
+---
+
+## Folder structure
+
+```
+src/
+  app/                         # Redux store + typed hooks
+  components/                  # Shared layout/components
+  features/
+    dashboard/                 # Dashboard feature boundary
+      components/              # Feature-specific UI
+      slices/                  # RTK Query API slice (and future slices)
+  mocks/                       # In-memory mock backend
+  types/                       # Shared TypeScript types
+  utils/                       # Validation + constants
+tests/                         # All tests live outside src/
+```
+
+---
+
+## Testing approach (minimal but strong)
+
+The tests focus on “high value” regression points:
+- **Schema unit tests**: `tests/utils/validation.test.ts`
+- **Modal integration tests** (RTL): `tests/features/dashboard/AddEditAccountModal.test.tsx`
+  - blocks duplicate platform creation
+  - successful submit calls mutation + closes modal
+
+The intent is to prove correctness where regressions are expensive: validation + modal flows.
+
+---
+
+## If I had more time (follow-ups)
+- Add optimistic updates for edit/delete via RTK Query `onQueryStarted`
+- Add an a11y audit pass (focus management, ARIA labeling, keyboard navigation)
+- Add more integration tests (delete confirm flow, edit flow, dashboard list refresh)
+
