@@ -1,16 +1,17 @@
+import type { ComponentProps } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import AddEditAccountModal from './AddEditAccountModal';
-import type { SocialAccount } from '../../../types';
+import AddEditAccountModal from '../../../src/features/dashboard/components/AddEditAccountModal';
+import type { SocialAccount } from '../../../src/types';
 
 // We mock the RTK Query hooks because this test is about the UI behavior + validation,
 // not RTK Query internals. Keeping the mock tight makes the test stable and focused.
 const addAccountTrigger = vi.fn();
 const editAccountTrigger = vi.fn();
 
-vi.mock('../slices/dashboardApi', () => ({
+vi.mock('../../../src/features/dashboard/slices/dashboardApi', () => ({
   useAddAccountMutation: () => [
     addAccountTrigger,
     { isLoading: false },
@@ -21,7 +22,7 @@ vi.mock('../slices/dashboardApi', () => ({
   ],
 }));
 
-function renderModal(props: React.ComponentProps<typeof AddEditAccountModal>) {
+function renderModal(props: ComponentProps<typeof AddEditAccountModal>) {
   const theme = createTheme();
   return render(
     <ThemeProvider theme={theme}>
@@ -62,9 +63,7 @@ describe('AddEditAccountModal', () => {
     // Default platform is "facebook" → should trip the duplicate check on submit.
     await user.click(screen.getByRole('button', { name: /^add$/i }));
 
-    expect(
-      await screen.findByText(/already exists/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
     expect(addAccountTrigger).not.toHaveBeenCalled();
   });
 
