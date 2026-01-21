@@ -24,9 +24,9 @@ export default function Layout({ children }: LayoutProps) {
       {/* Title Text */}
       <Typography 
         component="h1" 
-        className="text-xl font-bold text-black tracking-tight"
+        sx={{fontWeight:'bold', fontSize:'20px',color:'#000'}}
       >
-        SocialPulse
+        SMD
       </Typography>
     </Box>
       </AppBar>
