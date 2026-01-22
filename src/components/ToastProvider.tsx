@@ -27,14 +27,8 @@ interface ToastProviderProps {
   children: ReactNode;
 }
 
-/**
- * ToastProvider
- *
- * We keep this intentionally tiny: one provider, one function (`showToast`), and a single
- * Snackbar instance. The goal here isn’t to build a full notification framework — it’s
- * to make mutation feedback obvious during the take-home (success/failure) without
- * sprinkling `Snackbar` state across every component.
- */
+
+//  ToastProvider
 export default function ToastProvider({ children }: ToastProviderProps) {
   const [toast, setToast] = useState<Toast | null>(null);
   const [open, setOpen] = useState(false);

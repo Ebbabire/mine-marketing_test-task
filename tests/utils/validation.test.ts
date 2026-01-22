@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { accountSchema } from '../../src/utils/validation';
+import { accountSchema } from '../../src/utils/schemas/accountSchema';
 
 describe('accountSchema', () => {
   it('accepts a valid payload', () => {

@@ -66,8 +66,8 @@ export default function AccountCard({ account, onEdit, onDelete }: AccountCardPr
         <div className="flex items-center gap-3 relative">
           <img 
             src={avatarUrl} 
-            alt={`${account.displayName} avatar`} 
-            className="w-12 h-12 rounded-full ring-2 ring-slate-50 object-cover" 
+            alt={`${account.displayName} avatar`}
+            className="w-12 h-12 rounded-full ring-2 ring-slate-50 object-cover bg-slate-400"
           />
           <div 
             className="absolute bottom-1 left-7 w-7 h-7 rounded-full flex items-center justify-center text-white border-white border-2 p-1 text-xs font-bold shadow-md"

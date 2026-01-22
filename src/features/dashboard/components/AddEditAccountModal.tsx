@@ -15,7 +15,7 @@ import {
   Alert,
 } from '@mui/material';
 import { useAddAccountMutation, useEditAccountMutation } from '../slices/dashboardApi';
-import { accountSchema, type AccountFormValues } from '../../../utils/validation';
+import { accountSchema, type AccountFormValues } from '../../../utils/schemas/accountSchema';
 import { useToast } from '../../../components/ToastProvider';
 import type { SocialAccount } from '../../../types';
 import type { SocialPlatform } from '../../../types';

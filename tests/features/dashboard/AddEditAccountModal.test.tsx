@@ -1,4 +1,5 @@
-import type { ComponentProps } from 'react';
+import React, { type ComponentProps } from 'react';
+import '@testing-library/jest-dom/vitest';
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +8,7 @@ import AddEditAccountModal from '../../../src/features/dashboard/components/AddE
 import ToastProvider from '../../../src/components/ToastProvider';
 import type { SocialAccount } from '../../../src/types';
 
-// We mock the RTK Query hooks because this test is about the UI behavior + validation,
+// mock the RTK Query hooks because this test is about the UI behavior + validation,
 // not RTK Query internals. Keeping the mock tight makes the test stable and focused.
 const addAccountTrigger = vi.fn();
 const editAccountTrigger = vi.fn();

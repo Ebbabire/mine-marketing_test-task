@@ -2,8 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { dashboardApi } from '../features/dashboard/slices/dashboardApi';
 
-
-
 //  Central Redux store configuration.
 
 export const store = configureStore({
@@ -21,7 +19,6 @@ export const store = configureStore({
 });
 
 // Enable refetchOnFocus and refetchOnReconnect behaviors for RTK Query.
- 
 setupListeners(store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;
