@@ -113,7 +113,6 @@ The intent is to prove correctness where regressions are expensive: validation +
 ---
 
 ## If I had more time (follow-ups)
-- Add optimistic updates for edit/delete via RTK Query `onQueryStarted`
 - Add an a11y audit pass (focus management, ARIA labeling, keyboard navigation)
 - Add more integration tests (delete confirm flow, edit flow, dashboard list refresh)
 
